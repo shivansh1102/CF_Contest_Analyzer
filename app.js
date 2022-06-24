@@ -16,7 +16,7 @@ app.get("/", (req, res)=>{
 
 class ProblemAnalysis
 {
-    constructor(cntSubmission, cntAC, sumSubmitTime, fastestSubmission, slowestSubmission, maxRatedProblem)
+    constructor(cntSubmission = 0, cntAC = 0, sumSubmitTime = 0, fastestSubmission = 0, slowestSubmission = Infinity, maxRatedProblem = 0)
     {
         this.cntSubmission = cntSubmission;
         this.cntAC = cntAC;
@@ -43,6 +43,28 @@ class ProblemAnalysis
     }
 }
 
+let problems = [];
+for(let i = 0; i < 6; i++)
+problems[i] = new ProblemAnalysis();
+
+function timeAnalysis(submissions)
+{
+     
+}
+
+
+app.post("/", (req, res)=>{
+    const handle = req.body.handle;
+    const url = "https://codeforces.com/api/user.status?handle=" + handle;
+    console.log(url);
+    https.get(url, (response)=>{
+        console.log(response.statusCode);
+        response.on("data", (data)=>{
+            const result = JSON.parse(data);
+            console.log(result);
+        })
+    })
+})
 
 
 app.listen(3000, ()=>{
