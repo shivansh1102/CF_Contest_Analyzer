@@ -18,24 +18,6 @@ app.get("/", (req, res) => {
     res.render("analysis",{display:0});
 });
 
-app.post("/", (req, res) => {
-    const handle = req.body.handle;
-    const url = "https://codeforces.com/api/user.status?handle=" + handle;
-    console.log(url);
-    https.get(url, (response) => {
-        console.log(response.statusCode);
-        let chunks = [];
-
-        response.on("data", (data) => {
-            chunks.push(data);
-        }).on("end", () => {
-            let data = Buffer.concat(chunks);
-            let result = JSON.parse(data);
-            console.log(result);
-        })
-    })
-    res.render('analysis',{handle,display:1})
-})
 
 class ProblemAnalysis {
     constructor(cntSubmission = 0, cntAC = 0, sumSubmitTime = 0, fastestSubmission = 0, slowestSubmission = Infinity, maxRatedProblem = 0) {
@@ -61,13 +43,55 @@ class ProblemAnalysis {
 }
 
 let problems = [];
-for (let i = 0; i < 6; i++)
-    problems[i] = new ProblemAnalysis();
+for(let i = 0; i < 10; i++)
+problems[i] = new ProblemAnalysis();
 
-function timeAnalysis(submissions) {
-
+const problemIndex = {
+    "A" : 0,
+    "B" : 1,
+    "C" : 2,
+    "D" : 3,
+    "E" : 4,
+    "F" : 5
+};
+function findIndex(index)
+{
+    return problemIndex.index;
+}
+function timeAnalysis(result, lowerTime, upperTime)
+{
+    result.forEach(submission => {
+        if(submission.creationTimeSeconds >= lowerTime && submission.creationTimeSeconds <= upperTime && submission.author.participantType === "CONTESTANT")
+        {
+            const index = findIndex(submission.problem.index);
+            problems[i].cntSubmission++;
+            if(submission.verdict === "OK")
+            {
+                problems[i].cntAC++;
+                problems[i].sumSubmitTime += submission.relativeTimeSeconds;
+            }
+        }
+    });
 }
 
+app.post("/", (req, res) => {
+    const handle = req.body.handle;
+    const url = "https://codeforces.com/api/user.status?handle=" + handle;
+    console.log(url);
+    https.get(url, (response) => {
+        console.log(response.statusCode);
+        let chunks = [];
+
+        response.on("data", (data) => {
+            chunks.push(data);
+        }).on("end", () => {
+            let data = Buffer.concat(chunks);
+            let result = JSON.parse(data);
+            console.log(result);
+        })
+    })
+    res.render('analysis',{handle,display:1})
+})
 
 app.listen(3000, () => {
     console.log("Server started on port 3000");
