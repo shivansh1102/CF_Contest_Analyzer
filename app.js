@@ -55,12 +55,16 @@ function timeAnalysis(submissions)
 
 app.post("/", (req, res)=>{
     const handle = req.body.handle;
-    const url = "https://codeforces.com/api/user.status?handle=" + handle;
+    const url = "https://codeforces.com/api/user.status?handle=" + handle ;
     console.log(url);
     https.get(url, (response)=>{
         console.log(response.statusCode);
+        let chunks = [];
         response.on("data", (data)=>{
-            const result = JSON.parse(data);
+            chunks.push(data);
+        }).on("end", ()=>{
+            let data = Buffer.concat(chunks);
+            let result = JSON.parse(data);
             console.log(result);
         })
     })
