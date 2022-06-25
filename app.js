@@ -17,38 +17,6 @@ app.get("/", (req, res) => {
     res.render("analysis",{display:0});
 });
 
-app.post("/", (req, res) => {
-    const {handle,startDate,endDate} = req.body;
-    const url = "https://codeforces.com/api/user.status?handle=" + handle;
-    const ratingUrl = "https://codeforces.com/api/user.rating?handle="+ handle;
-    console.log(url);
-    https.get(url, (response) => {
-        console.log(response.statusCode);
-        let chunks = [];
-
-        response.on("data", (data) => {
-            chunks.push(data);
-        }).on("end", () => {
-            let data = Buffer.concat(chunks);
-            let result = JSON.parse(data);
-            // console.log(result);
-        })
-    })
-
-    https.get(ratingUrl, (response) => {
-        console.log(response.statusCode);
-        let chunks = [];
-        response.on("data", (data) => {
-            chunks.push(data);
-        }).on("end", () => {
-            let ratingData = Buffer.concat(chunks);
-            let ratingResult = JSON.parse(ratingData);
-            // console.log(ratingResult);
-        })
-    })
-
-    res.render('analysis',{handle,display:1,problems})
-})
 
 class ProblemAnalysis {
     constructor(cntSubmission = 0, cntAC = 0, sumSubmitTime = 0, fastestSubmission = 0, slowestSubmission = Infinity, maxRatedProblem = 0) {
@@ -115,6 +83,39 @@ const generalAnalysis=(result,ratingResult)=>{
         }
     })
 }
+
+app.post("/", (req, res) => {
+    const {handle,startDate,endDate} = req.body;
+    const url = "https://codeforces.com/api/user.status?handle=" + handle;
+    const ratingUrl = "https://codeforces.com/api/user.rating?handle="+ handle;
+    console.log(url);
+    https.get(url, (response) => {
+        console.log(response.statusCode);
+        let chunks = [];
+
+        response.on("data", (data) => {
+            chunks.push(data);
+        }).on("end", () => {
+            let data = Buffer.concat(chunks);
+            let result = JSON.parse(data);
+            // console.log(result);
+        })
+    })
+
+    https.get(ratingUrl, (response) => {
+        console.log(response.statusCode);
+        let chunks = [];
+        response.on("data", (data) => {
+            chunks.push(data);
+        }).on("end", () => {
+            let ratingData = Buffer.concat(chunks);
+            let ratingResult = JSON.parse(ratingData);
+            // console.log(ratingResult);
+        })
+    })
+
+    res.render('analysis',{handle,display:1,problems})
+})
 
 app.listen(3000, () => {
     console.log("Server started on port 3000");
