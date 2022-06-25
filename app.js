@@ -87,9 +87,21 @@ function timeAnalysis(result, lowerTime, upperTime)
     });
 }
 
+const generalAnalysis=(result,ratingResult)=>{
+
+    let numOfContests=0;
+    let contestIds = new Map();
+    result.forEach((submission)=>{
+        if(submission.author.participantType==="CONTESTANT" && !contestIds.has(submission.contestId)){
+            contestIds.set(submission.contestId,submission.author.startTimeSeconds);
+        }
+    })
+}
+
 app.post("/", (req, res) => {
-    const handle = req.body.handle;
+    const {handle,startDate,endDate} = req.body;
     const url = "https://codeforces.com/api/user.status?handle=" + handle;
+    const ratingUrl = "https://codeforces.com/api/user.rating?handle="+ handle;
     console.log(url);
     https.get(url, (response) => {
         console.log(response.statusCode);
@@ -100,10 +112,23 @@ app.post("/", (req, res) => {
         }).on("end", () => {
             let data = Buffer.concat(chunks);
             let result = JSON.parse(data);
-            console.log(result);
+            // console.log(result);
         })
     })
-    res.render('analysis',{handle,display:1})
+
+    https.get(ratingUrl, (response) => {
+        console.log(response.statusCode);
+        let chunks = [];
+        response.on("data", (data) => {
+            chunks.push(data);
+        }).on("end", () => {
+            let ratingData = Buffer.concat(chunks);
+            let ratingResult = JSON.parse(ratingData);
+            // console.log(ratingResult);
+        })
+    })
+
+    res.render('analysis',{handle,display:1,problems})
 })
 
 app.listen(3000, () => {
