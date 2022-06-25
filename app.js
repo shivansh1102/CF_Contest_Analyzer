@@ -18,14 +18,22 @@ app.get("/", (req, res) => {
     res.render("analysis",{display:0});
 });
 
-
+class timeProblem
+{
+    contructor(submitTime = 0, contestID = "") {
+        this.submitTime = submitTime;
+        this.contestID = contestID;
+    }
+}
 class ProblemAnalysis {
-    constructor(cntSubmission = 0, cntAC = 0, sumSubmitTime = 0, fastestSubmission = 0, slowestSubmission = Infinity, maxRatedProblem = 0) {
+    constructor(cntSubmission = 0, cntAC = 0, sumSubmitTime = 0, fastestSubmission = new timeProblem(), slowestSubmission = new timeProblem(), maxRatedProblem = 0) {
         this.cntSubmission = cntSubmission;
         this.cntAC = cntAC;
         this.sumSubmitTime = sumSubmitTime;
         this.fastestSubmission = fastestSubmission;
+        this.fastestSubmission.submitTime = 0;
         this.slowestSubmission = slowestSubmission;
+        this.slowestSubmission.submitTime = Infinity;
         this.maxRatedProblem = maxRatedProblem;
     }
     countWA() {
@@ -69,6 +77,11 @@ function timeAnalysis(result, lowerTime, upperTime)
             {
                 problems[i].cntAC++;
                 problems[i].sumSubmitTime += submission.relativeTimeSeconds;
+                if(submission.relativeTimeSeconds > problems[i].fastestSubmission.submitTime)
+                {
+                    problems[i].fastestSubmission.submitTime = submission.relativeTimeSeconds;
+                    problems[i].fastestSubmission.contestID = submission.author.contestId
+                }
             }
         }
     });
