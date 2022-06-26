@@ -162,6 +162,20 @@ function findIndex(index) {
         case "F":
             ans = 5;
             break;
+        case "G":
+            ans = 6;
+            break;
+        case "H":
+            ans = 7;
+            break;
+        case "I":
+            ans = 8;
+            break;
+        case "J":
+            ans = 9;
+            break;
+        deafult :
+            ans = -1;
     }
     return ans;
 }
@@ -171,21 +185,24 @@ function timeAnalysis(result, lowerTime, upperTime, problems) {
         if (submission.creationTimeSeconds >= lowerTime && submission.creationTimeSeconds <= upperTime && submission.author.participantType === "CONTESTANT") {
             const index = submission.problem.index.substring(0, 1);
             const i = findIndex(index);
-            problems[i].cntSubmission += 1;
-            if (submission.verdict === "OK") {
-                problems[i].cntAC++;
-                problems[i].sumSubmitTime += submission.relativeTimeSeconds;
-                if (submission.relativeTimeSeconds < problems[i].fastestSubmission.submitTime) {
-                    problems[i].fastestSubmission.submitTime = submission.relativeTimeSeconds;
-                    problems[i].fastestSubmission.contestID = submission.author.contestId;
-                }
-                if (submission.relativeTimeSeconds > problems[i].slowestSubmission.submitTime) {
-                    problems[i].slowestSubmission.submitTime = submission.relativeTimeSeconds;
-                    problems[i].slowestSubmission.contestID = submission.author.contestId;
-                }
-                if (submission.problem.rating > problems[i].maxRatedProblem.rating) {
-                    problems[i].maxRatedProblem.rating = submission.problem.rating;
-                    problems[i].maxRatedProblem.contestID = submission.author.contestId;
+            if(i >= 0)
+            {
+                problems[i].cntSubmission += 1;
+                if (submission.verdict === "OK") {
+                    problems[i].cntAC++;
+                    problems[i].sumSubmitTime += submission.relativeTimeSeconds;
+                    if (submission.relativeTimeSeconds < problems[i].fastestSubmission.submitTime) {
+                        problems[i].fastestSubmission.submitTime = submission.relativeTimeSeconds;
+                        problems[i].fastestSubmission.contestID = submission.author.contestId;
+                    }
+                    if (submission.relativeTimeSeconds > problems[i].slowestSubmission.submitTime) {
+                        problems[i].slowestSubmission.submitTime = submission.relativeTimeSeconds;
+                        problems[i].slowestSubmission.contestID = submission.author.contestId;
+                    }
+                    if (submission.problem.rating > problems[i].maxRatedProblem.rating) {
+                        problems[i].maxRatedProblem.rating = submission.problem.rating;
+                        problems[i].maxRatedProblem.contestID = submission.author.contestId;
+                    }
                 }
             }
         }
@@ -254,7 +271,7 @@ app.post("/", async (req, res) => {
     
         res.render('analysis', { handle, display: 1, problems, general,alert:"" })
     } catch (error) {
-        let e=error.response.data
+        let e=error.response.data;
         res.render("analysis", { display: 0, alert:e.comment });
     }
 })
