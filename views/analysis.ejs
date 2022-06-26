@@ -63,7 +63,7 @@
                         <p class="card-text">Percent times solved in this period</p>
                       </div>
                       <div class="col-sm-6">
-                        <p class="card-text"><%=Math.round(problem.percentTimeSolved*100)/100 %></p>
+                        <p class="card-text"><%=problem.percentTimeSolved%></p>
                       </div>
                       <div class="col-sm-6">
                         <p class="card-text">Number of WA/TLE/RTE submissions</p>
@@ -75,7 +75,7 @@
                         <p class="card-text">Accuracy</p>
                       </div>
                       <div class="col-sm-6">
-                        <p class="card-text"><%=Math.round(problem.accuracy*100)/100%></p>
+                        <p class="card-text"><%=problem.accuracy%></p>
                       </div>
                       <div class="col-sm-6">
                         <p class="card-text">Average time took to solve this problem</p>
@@ -173,13 +173,13 @@
                               <p class="card-text">Average Rank</p>
                           </div>
                           <div class="col-md-2">
-                              <p class="card-text"><%= Math.round(general.averageRank*100)/100 %></p>
+                              <p class="card-text"><%=general.averageRank%></p>
                           </div>
                           <div class="col-md-6">
                               <p class="card-text">Average Number of Problems Solved</p>
                           </div>
                           <div class="col-md-2">
-                              <p class="card-text"><%= Math.round(general.averageProblemSolved*100)/100 %></p>
+                              <p class="card-text"><%=general.averageProblemSolved%></p>
                           </div>
                           <div class="col-md-6">
                               <p class="card-text">Total Delta</p>
