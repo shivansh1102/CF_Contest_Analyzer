@@ -274,6 +274,11 @@ app.post("/", async (req, res) => {
     
         res.render('analysis', { handle, display: 1, problems, general,alert:"" })
     } catch (error) {
+        if(!error || !error.response || !error.response.data || !error.response.data.comment){
+            res.render("analysis", { display: 0, alert:"Internal Server error" });
+            return;
+        }
+        console.log(error)
         let e=error.response.data
         res.render("analysis", { display: 0, alert:e.comment });
     }
