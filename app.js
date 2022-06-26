@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 
 app.get("/", (req, res) => {
-    res.render("analysis", { display: 0 });
+    res.render("analysis", { display: 0,alert:"" });
 });
 
 class timeProblem // this is used in storing fastest & slowest submission {time, contestID} so that link can be provided to user
