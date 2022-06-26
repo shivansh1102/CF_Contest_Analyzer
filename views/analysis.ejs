@@ -32,6 +32,24 @@
                       <div class="col-sm-4">
                         <p class="card-text text-muted">in <a href="<%=url+problem.fastestSubmission.contestID%>"><%=problem.fastestSubmission.contestID%></a></p>
                       </div>
+                      <div class="col-sm-6">
+                        <p class="card-text">Slowest Submission </p>
+                      </div>
+                      <div class="col-sm-2">
+                        <p class="card-text"><%=problem.slowestSubmission.submitTime%></p>
+                      </div>
+                      <div class="col-sm-4">
+                        <p class="card-text text-muted">in <a href="<%=url+problem.slowestSubmission.contestID%>"><%=problem.slowestSubmission.contestID%></a></p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text">Max Rated Problem Solved </p>
+                      </div>
+                      <div class="col-sm-2">
+                        <p class="card-text"><%=problem.maxRatedProblem.rating%></p>
+                      </div>
+                      <div class="col-sm-4">
+                        <p class="card-text text-muted">in <a href="<%=url+problem.maxRatedProblem.contestID%>"><%=problem.maxRatedProblem.contestID%></a></p>
+                      </div>
                     </div>
                   </div>
                 </div>
