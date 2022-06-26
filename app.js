@@ -6,6 +6,7 @@ const app = express();
 const https = require("https");
 const ejsmate = require("ejs-mate");
 const { start } = require("repl");
+const axios = require('axios').default;
 
 app.engine('ejs', ejsmate)
 app.set('views', path.join(__dirname, 'views'))
@@ -16,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 
 app.get("/", (req, res) => {
-    res.render("analysis",{display:0});
+    res.render("analysis", { display: 0 });
 });
 
 class timeProblem // this is used in storing fastest & slowest submission {time, contestID} so that link can be provided to user
@@ -26,12 +27,13 @@ class timeProblem // this is used in storing fastest & slowest submission {time,
         this.contestID = contestID;
     }
 }
-class RatingProblem{ // this is used in storing max rated problem {rating, contestID}
+class RatingProblem { // this is used in storing max rated problem {rating, contestID}
     contructor(rating = 0, contestID = "") {
         this.rating = rating;
         this.contestID = contestID;
     }
 }
+
 class ProblemAnalysis {
     constructor(cntSubmission = 0, cntAC = 0, sumSubmitTime = 0, fastestSubmission = new timeProblem(), slowestSubmission = new timeProblem(), maxRatedProblem = new RatingProblem()) {
         this.cntSubmission = cntSubmission;
@@ -57,69 +59,100 @@ class ProblemAnalysis {
         return (this.sumSubmitTime / this.cntAC) * 100;
     }
 }
+
+class generalStats {
+    constructor(maxDelta = new RatingProblem(), minDelta = new RatingProblem(), bestRank = new RatingProblem(), worstRank = new RatingProblem()) {
+        this.totalContests = 0;
+        this.bestRank = bestRank;
+        this.bestRank.rating = Infinity;
+        this.worstRank = worstRank;
+        this.worstRank.rating = -Infinity;
+        this.averageRank = 0;
+        this.totalDelta = 0;
+        this.maxDelta = maxDelta;
+        this.maxDelta.rating = -Infinity;
+        this.minDelta = minDelta;
+        this.minDelta.rating = Infinity;
+    }
+
+    addContest = (rank, delta, contestId) => {
+        this.averageRank = (this.averageRank) * (this.totalContests) + rank;
+        this.totalContests++;
+        this.averageRank /= this.totalContests;
+        this.totalDelta += delta;
+        if (this.maxDelta.rating < delta) {
+            this.maxDelta.rating = delta;
+            this.maxDelta.contestID = contestId;
+        }
+        if (this.minDelta.rating > delta) {
+            this.minDelta.rating = delta;
+            this.minDelta.contestID = contestId;
+        }
+        if (this.bestRank.rating > rank) {
+            this.bestRank.rating = rank;
+            this.bestRank.contestID = contestId;
+        }
+        if (this.worstRank.rating < rank) {
+            this.worstRank.rating = rank;
+            this.worstRank.contestID = contestId;
+        }
+    }
+}
+
 let problems = [];
-function resetArray()
-{
+let general = new generalStats();
+
+function resetArray() {
     problems = [];
-    for(let i = 0; i < 10; i++)
-    {
+    general = new generalStats();
+    for (let i = 0; i < 10; i++) {
         problems[i] = new ProblemAnalysis();
     }
 }
 
-
-
-function findIndex(index)
-{
+function findIndex(index) {
     let ans;
-    switch(index)
-    {
-        case "A" :
+    switch (index) {
+        case "A":
             ans = 0;
             break;
-        case "B" :
+        case "B":
             ans = 1;
             break;
-        case "C" :
+        case "C":
             ans = 2;
             break;
-        case "D" :
+        case "D":
             ans = 3;
             break;
-        case "E" :
+        case "E":
             ans = 4;
-            break;    
-        case "F" : 
+            break;
+        case "F":
             ans = 5;
             break;
     }
     return ans;
 }
 
-function timeAnalysis(result, lowerTime, upperTime, problems)
-{
-    result.forEach((submission)=>{
-        if(submission.creationTimeSeconds >= lowerTime && submission.creationTimeSeconds <= upperTime && submission.author.participantType === "CONTESTANT")
-        {
-            const index = submission.problem.index.substring(0,1);
+function timeAnalysis(result, lowerTime, upperTime, problems) {
+    result.forEach((submission) => {
+        if (submission.creationTimeSeconds >= lowerTime && submission.creationTimeSeconds <= upperTime && submission.author.participantType === "CONTESTANT") {
+            const index = submission.problem.index.substring(0, 1);
             const i = findIndex(index);
             problems[i].cntSubmission += 1;
-            if(submission.verdict === "OK")
-            {
+            if (submission.verdict === "OK") {
                 problems[i].cntAC++;
                 problems[i].sumSubmitTime += submission.relativeTimeSeconds;
-                if(submission.relativeTimeSeconds < problems[i].fastestSubmission.submitTime)
-                {
+                if (submission.relativeTimeSeconds < problems[i].fastestSubmission.submitTime) {
                     problems[i].fastestSubmission.submitTime = submission.relativeTimeSeconds;
                     problems[i].fastestSubmission.contestID = submission.author.contestId;
                 }
-                if(submission.relativeTimeSeconds > problems[i].slowestSubmission.submitTime)
-                {
+                if (submission.relativeTimeSeconds > problems[i].slowestSubmission.submitTime) {
                     problems[i].slowestSubmission.submitTime = submission.relativeTimeSeconds;
                     problems[i].slowestSubmission.contestID = submission.author.contestId;
                 }
-                if(submission.problem.rating > problems[i].maxRatedProblem.rating)
-                {
+                if (submission.problem.rating > problems[i].maxRatedProblem.rating) {
                     problems[i].maxRatedProblem.rating = submission.problem.rating;
                     problems[i].maxRatedProblem.contestID = submission.author.contestId;
                 }
@@ -128,52 +161,51 @@ function timeAnalysis(result, lowerTime, upperTime, problems)
     });
 }
 
-const generalAnalysis=(result,ratingResult)=>{
+const generalAnalysis = (result, ratingResult, lowerTime, upperTime, general) => {
 
-    let numOfContests=0;
     let contestIds = new Map();
-    result.forEach((submission)=>{
-        if(submission.author.participantType==="CONTESTANT" && !contestIds.has(submission.contestId)){
-            contestIds.set(submission.contestId,submission.author.startTimeSeconds);
+    result.forEach((submission) => {
+        if (submission.author.participantType === "CONTESTANT" && !contestIds.has(submission.contestId) && submission.author.startTimeSeconds >= lowerTime && submission.author.startTimeSeconds <= upperTime) {
+            contestIds.set(submission.contestId, submission.author.startTimeSeconds);
+        }
+    })
+
+    ratingResult.forEach((contest) => {
+        if (contestIds.has(contest.contestId)) {
+            general.addContest(contest.rank, contest.newRating - contest.oldRating, contest.contestId)
         }
     })
 }
 
-app.post("/", (req, res) => {
+async function getUser(url) {
+    try {
+        const response = await axios.get(url);
+        return response
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+app.post("/", async (req, res) => {
     resetArray();
-    let {handle,startDate,endDate} = req.body;
+    let { handle, startDate, endDate } = req.body;
     startDate = parseInt((new Date(startDate).getTime() / 1000).toFixed(0));
     endDate = parseInt((new Date(endDate).getTime() / 1000).toFixed(0));
-    const url = "https://codeforces.com/api/user.status?handle=" + handle ;
-    const ratingUrl = "https://codeforces.com/api/user.rating?handle="+ handle;
-    console.log(url);
-    https.get(url, (response) => {
-        console.log(response.statusCode);
-        let chunks = [];
 
-        response.on("data", (data) => {
-            chunks.push(data);
-        }).on("end", () => {
-            let data = Buffer.concat(chunks);
-            let result = JSON.parse(data).result;
-            timeAnalysis(result, startDate, endDate, problems);
-            console.log(problems);
-        })
-    })
+    const url = "https://codeforces.com/api/user.status?handle=" + handle;
+    const ratingUrl = "https://codeforces.com/api/user.rating?handle=" + handle;
 
-    https.get(ratingUrl, (response) => {
-        console.log(response.statusCode);
-        let chunks = [];
-        response.on("data", (data) => {
-            chunks.push(data);
-        }).on("end", () => {
-            let ratingData = Buffer.concat(chunks);
-            let ratingResult = JSON.parse(ratingData);
-            // console.log(ratingResult);
-        })
-    })
+    let submissionData = await getUser(url);
+    let result = submissionData.data.result;
+    timeAnalysis(result, startDate, endDate, problems);
+    console.log(problems);
 
-    res.render('analysis',{handle,display:1,problems})
+    let ratingData = await getUser(ratingUrl);
+    ratingData = ratingData.data.result
+    generalAnalysis(result, ratingData, startDate, endDate, general)
+    // console.log(general)
+
+    res.render('analysis', { handle, display: 1, problems, general })
 })
 
 app.listen(3000, () => {
