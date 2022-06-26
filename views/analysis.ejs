@@ -4,6 +4,7 @@
   <%const url="https://codeforces.com/contest/"%>
     <div class="container">
       <div class="row">
+          <center><h1>Time Analysis</h1></center>
           <%problems.forEach((problem,index)=>{%>
             <%if(problem.cntSubmission){%>
               <div class="col-sm-6 my-2">
@@ -101,5 +102,88 @@
             <%}%>
           <%})%>
       </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <center>
+            <h1>General Analysis</h1>
+            
+                <div class="card" style="width: 60rem;">
+                  <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p class="card-text">Total Contests</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="card-text"><%=general.totalContests%></p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="card-text">Best Rank</p>
+                        </div>
+                        <div class="col-sm-2">
+                            <p class="card-text"><%=general.bestRank.rating%></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="card-text text-muted"> in <a href="<%=url+general.bestRank.contestID%>"><%=general.bestRank.contestID%></a></p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="card-text">Worst Rank</p>
+                        </div>
+                        <div class="col-sm-2">
+                            <p class="card-text"><%=general.worstRank.rating%></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="card-text text-muted"> in <a href="<%=url+general.worstRank.contestID%>"><%=general.worstRank.contestID%></a></p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="card-text">Average Rank</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="card-text"><%=general.averageRank%></p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="card-text">Average Number of Problems Solved</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="card-text"><%=general.averageProblemSolved%></p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="card-text">Total Delta</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="card-text"><%=general.totalDelta%></p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="card-text">Max Delta</p>
+                        </div>
+                        <div class="col-sm-2">
+                            <p class="card-text"><%=general.maxDelta.rating%></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="card-text text-muted"> in <a href="<%=url+general.maxDelta.contestID%>"><%=general.maxDelta.contestID%></a></p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="card-text">Min Delta</p>
+                        </div>
+                        <div class="col-sm-2">
+                            <p class="card-text"><%=general.minDelta.rating%></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="card-text text-muted"> in <a href="<%=url+general.minDelta.contestID%>"><%=general.minDelta.contestID%></a></p>
+                        </div>
+
+                    </div>
+                  </div>
+                </div>
+        </center>
+        </div>
     </div>
 <%}%>
