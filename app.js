@@ -238,12 +238,15 @@ app.post("/", async (req, res) => {
         let submissionData = await getUser(url);
         let result = submissionData.data.result;
         timeAnalysis(result, startDate, endDate, problems);
-        console.log(problems);
+        // console.log(problems);
     
         let ratingData = await getUser(ratingUrl);
         ratingData = ratingData.data.result
         generalAnalysis(result, ratingData, startDate, endDate, general)
-        // console.log(general)
+        console.log(general)
+        problems.forEach((problem)=>{
+            problem.updateOtherThings(general.totalContests);
+        });
     
         res.render('analysis', { handle, display: 1, problems, general,alert:"" })
     } catch (error) {

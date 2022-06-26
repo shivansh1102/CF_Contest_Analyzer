@@ -1,14 +1,5 @@
 <% layout('./boilerplate.ejs')%>
 
-<div class="div">
-  <%if(alert && alert.length!==0){%>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      <strong><%=alert%></strong>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <%}%>
-</div>
-
 <%if(display){%>
   <%const url="https://codeforces.com/contest/"%>
     <div class="container">
@@ -26,30 +17,35 @@
                       <div class="col-sm-6">
                         <p class="card-text"><%=problem.cntAC%></p>
                       </div>
+
                       <div class="col-sm-6">
                         <p class="card-text">Percent times solved in this period</p>
                       </div>
                       <div class="col-sm-6">
                         <p class="card-text"><%=problem.percentTimeSolved%></p>
                       </div>
+
                       <div class="col-sm-6">
                         <p class="card-text">Number of WA/TLE/RTE submissions</p>
                       </div>
                       <div class="col-sm-6">
                         <p class="card-text"><%=problem.cntWA%></p>
                       </div>
+
                       <div class="col-sm-6">
                         <p class="card-text">Accuracy</p>
                       </div>
                       <div class="col-sm-6">
                         <p class="card-text"><%=problem.accuracy%></p>
                       </div>
+
                       <div class="col-sm-6">
                         <p class="card-text">Average time took to solve this problem</p>
                       </div>
                       <div class="col-sm-6">
                         <p class="card-text"><%=problem.avgTime%></p>
                       </div>
+
                       <div class="col-sm-6">
                         <p class="card-text">Fastest Submission </p>
                       </div>
@@ -65,6 +61,7 @@
                             <p class="card-text text-muted"> in    <a href="<%=url+problem.fastestSubmission.contestID%>"><%=problem.fastestSubmission.contestID%></a></p>
                         </div>
                     <%}%>
+
                       <div class="col-sm-6">
                         <p class="card-text">Slowest Submission </p>
                       </div>
@@ -80,6 +77,7 @@
                         <p class="card-text text-muted">in <a href="<%=url+problem.slowestSubmission.contestID%>"><%=problem.slowestSubmission.contestID%></a></p>
                       </div>
                       <%}%>
+
                       <div class="col-sm-6">
                         <p class="card-text">Max Rated Problem Solved </p>
                       </div>
