@@ -1,4 +1,3 @@
-
 const express = require("express");
 const path = require("path")
 const bodyParser = require("body-parser");
@@ -19,6 +18,10 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.get("/", (req, res) => {
     res.render("analysis", { display: 0,alert:"" });
 });
+
+app.get("/about",(req,res)=>{
+    res.render("about")
+})
 
 class timeProblem // this is used in storing fastest & slowest submission {time, contestID} so that link can be provided to user
 {
@@ -77,11 +80,7 @@ class ProblemAnalysis {
             this.avgTime = 0;
         }
         else
-        {
-            this.avgTime = Math.floor(this.calculateAvgTime()/60);
-            this.fastestSubmission.submitTime = Math.floor(this.fastestSubmission.submitTime/60);
-            this.slowestSubmission.submitTime = Math.floor(this.slowestSubmission.submitTime/60);
-        }
+        this.avgTime = this.calculateAvgTime();
     }
 }
 
@@ -271,7 +270,7 @@ app.post("/", async (req, res) => {
     
         res.render('analysis', { handle, display: 1, problems, general,alert:"" })
     } catch (error) {
-        let e=error.response.data;
+        let e=error.response.data
         res.render("analysis", { display: 0, alert:e.comment });
     }
 })
