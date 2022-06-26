@@ -80,7 +80,11 @@ class ProblemAnalysis {
             this.avgTime = 0;
         }
         else
-        this.avgTime = this.calculateAvgTime();
+        {
+            this.avgTime = Math.floor(this.calculateAvgTime()/60);
+            this.fastestSubmission.submitTime = Math.floor(this.fastestSubmission.submitTime/60);
+            this.slowestSubmission.submitTime = Math.floor(this.slowestSubmission.submitTime/60);
+        }
     }
 }
 
