@@ -12,44 +12,88 @@
                     <h5 class="card-title">Problem <%=String.fromCharCode(index+65)%></h5>
                     <div class="row">
                       <div class="col-sm-6">
-                        <p class="card-text">Number of submissions</p>
-                      </div>
-                      <div class="col-sm-6">
-                        <p class="card-text"><%=problem.cntSubmission%></p>
-                      </div>
-                      <div class="col-sm-6">
                         <p class="card-text">Number of AC submissions</p>
                       </div>
                       <div class="col-sm-6">
                         <p class="card-text"><%=problem.cntAC%></p>
                       </div>
+
+                      <div class="col-sm-6">
+                        <p class="card-text">Percent times solved in this period</p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text"><%=problem.percentTimeSolved%></p>
+                      </div>
+
+                      <div class="col-sm-6">
+                        <p class="card-text">Number of WA/TLE/RTE submissions</p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text"><%=problem.cntWA%></p>
+                      </div>
+
+                      <div class="col-sm-6">
+                        <p class="card-text">Accuracy</p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text"><%=problem.accuracy%></p>
+                      </div>
+
+                      <div class="col-sm-6">
+                        <p class="card-text">Average time took to solve this problem</p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text"><%=problem.avgTime%></p>
+                      </div>
+
                       <div class="col-sm-6">
                         <p class="card-text">Fastest Submission </p>
                       </div>
-                      <div class="col-sm-2">
-                        <p class="card-text"><%=problem.fastestSubmission.submitTime%></p>
-                      </div>
-                      <div class="col-sm-4">
-                        <p class="card-text text-muted">in <a href="<%=url+problem.fastestSubmission.contestID%>"><%=problem.fastestSubmission.contestID%></a></p>
-                      </div>
+                      <% if(problem.fastestSubmission.submitTime == -1) { %>
+                        <div class="col-sm-2">
+                            <p class="card-text">NA</p>
+                        </div>
+                     <% } else { %>
+                        <div class="col-sm-2">
+                            <p class="card-text"><%=problem.fastestSubmission.submitTime%></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="card-text text-muted"> in    <a href="<%=url+problem.fastestSubmission.contestID%>"><%=problem.fastestSubmission.contestID%></a></p>
+                        </div>
+                    <%}%>
+
                       <div class="col-sm-6">
                         <p class="card-text">Slowest Submission </p>
                       </div>
+                      <% if(problem.slowestSubmission.submitTime == -1) { %>
+                        <div class="col-sm-2">
+                            <p class="card-text">NA</p>
+                        </div>
+                     <% } else { %>
                       <div class="col-sm-2">
                         <p class="card-text"><%=problem.slowestSubmission.submitTime%></p>
                       </div>
                       <div class="col-sm-4">
                         <p class="card-text text-muted">in <a href="<%=url+problem.slowestSubmission.contestID%>"><%=problem.slowestSubmission.contestID%></a></p>
                       </div>
+                      <%}%>
+
                       <div class="col-sm-6">
                         <p class="card-text">Max Rated Problem Solved </p>
                       </div>
+                      <% if(problem.maxRatedProblem.rating == -1) { %>
+                        <div class="col-sm-2">
+                            <p class="card-text">NA</p>
+                        </div>
+                     <% } else { %>
                       <div class="col-sm-2">
                         <p class="card-text"><%=problem.maxRatedProblem.rating%></p>
                       </div>
                       <div class="col-sm-4">
                         <p class="card-text text-muted">in <a href="<%=url+problem.maxRatedProblem.contestID%>"><%=problem.maxRatedProblem.contestID%></a></p>
                       </div>
+                      <%}%>
+                      
                     </div>
                   </div>
                 </div>

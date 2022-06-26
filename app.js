@@ -45,6 +45,11 @@ class ProblemAnalysis {
         this.slowestSubmission.submitTime = 0;
         this.maxRatedProblem = maxRatedProblem;
         this.maxRatedProblem.rating = 0;
+
+        this.cntWA = 0;
+        this.percentTimeSolved = 0;
+        this.accuracy = 0;
+        this.avgTime = 0;
     }
     countWA() {
         return this.cntSubmission - this.cntAC;
@@ -56,7 +61,23 @@ class ProblemAnalysis {
         return (this.cntAC / this.cntSubmission) * 100;
     }
     calculateAvgTime() {
-        return (this.sumSubmitTime / this.cntAC) * 100;
+        return (this.sumSubmitTime / this.cntAC);
+    }
+    updateOtherThings(cntContest) {
+        if(this.cntSubmission == 0)
+        return;
+        this.cntWA = this.countWA();
+        this.percentTimeSolved = this.calculatePercentTimeSolved(cntContest);
+        this.accuracy = this.calculateAccuracy();
+        if(this.cntAC == 0)
+        {
+            this.fastestSubmission.submitTime = -1;
+            this.slowestSubmission.submitTime = -1;
+            this.maxRatedProblem.rating = -1;
+            this.avgTime = 0;
+        }
+        else
+        this.avgTime = this.calculateAvgTime();
     }
 }
 
@@ -199,6 +220,7 @@ async function getUser(url) {
     }
 }
 
+
 app.post("/", async (req, res) => {
     resetArray();
     let { handle, startDate, endDate } = req.body;
@@ -217,7 +239,10 @@ app.post("/", async (req, res) => {
     ratingData = ratingData.data.result
     generalAnalysis(result, ratingData, startDate, endDate, general)
     console.log(general)
-
+    problems.forEach((problem)=>{
+        problem.updateOtherThings(general.totalContests);
+    });
+    console.log(problems);
     res.render('analysis', { handle, display: 1, problems, general })
 })
 
