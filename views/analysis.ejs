@@ -45,7 +45,7 @@
   <%const url="https://codeforces.com/contest/"%>
     <div class="container">
       <div class="text-center"><h1>Time Analysis</h1></div>
-      <div class="row row-cols-1 row-cols-md-2 g-4 my-3">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2">
           <%problems.forEach((problem,index)=>{%>
             <%if(problem.cntSubmission){%>
               <div class="col">
@@ -140,11 +140,9 @@
     <div class="container">
         
             <div class="text-center">
-              <h1>General Analysis</h1>
+              <h1 class="my-3">General Analysis</h1>
               <div class="row">
-                <div class="col-sm-1"></div>
-                <div class="col-sm-10">
-                  <div class="card shadow p-3 mb-5 bg-body rounded" style="width: 60rem;">
+                  <div class="card mx-auto shadow p-3 mb-5 bg-body rounded" style="width: 60rem;">
                     <div class="card-body">
                       <div class="row">
                           <div class="col-md-6">
@@ -211,7 +209,5 @@
                     </div>
                   </div>
                 </div>
-              </div>  
-            </div>
     </div>
 <%}%>
