@@ -1,7 +1,43 @@
 <% layout('./boilerplate.ejs')%>
 
 <%if(display){%>
+  <%const url="https://codeforces.com/contest/"%>
     <div class="container">
-        <h5>Handle : <%=handle%></h5>
+      <div class="row">
+          <%problems.forEach((problem,index)=>{%>
+            <%if(problem.cntSubmission){%>
+              <div class="col-sm-6 my-2">
+                <div class="card" style="width: 40rem;">
+                  <div class="card-body">
+                    <h5 class="card-title">Problem <%=String.fromCharCode(index+65)%></h5>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <p class="card-text">Number of submissions</p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text"><%=problem.cntSubmission%></p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text">Number of AC submissions</p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text"><%=problem.cntAC%></p>
+                      </div>
+                      <div class="col-sm-6">
+                        <p class="card-text">Fastest Submission </p>
+                      </div>
+                      <div class="col-sm-2">
+                        <p class="card-text"><%=problem.fastestSubmission.submitTime%></p>
+                      </div>
+                      <div class="col-sm-4">
+                        <p class="card-text text-muted">in <a href="<%=url+problem.fastestSubmission.contestID%>"><%=problem.fastestSubmission.contestID%></a></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <%}%>
+          <%})%>
+      </div>
     </div>
 <%}%>
