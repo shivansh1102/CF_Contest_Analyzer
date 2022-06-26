@@ -68,6 +68,7 @@ class generalStats {
         this.worstRank = worstRank;
         this.worstRank.rating = -Infinity;
         this.averageRank = 0;
+        this.averageProblemSolved = 0;
         this.totalDelta = 0;
         this.maxDelta = maxDelta;
         this.maxDelta.rating = -Infinity;
@@ -75,10 +76,15 @@ class generalStats {
         this.minDelta.rating = Infinity;
     }
 
-    addContest = (rank, delta, contestId) => {
+    addContest = (rank, delta, contestId, cnt) => {
         this.averageRank = (this.averageRank) * (this.totalContests) + rank;
+        this.averageProblemSolved = (this.averageProblemSolved) * (this.totalContests) + cnt;
+        
         this.totalContests++;
         this.averageRank /= this.totalContests;
+        this.averageProblemSolved /= this.totalContests;
+        
+
         this.totalDelta += delta;
         if (this.maxDelta.rating < delta) {
             this.maxDelta.rating = delta;
@@ -165,14 +171,21 @@ const generalAnalysis = (result, ratingResult, lowerTime, upperTime, general) =>
 
     let contestIds = new Map();
     result.forEach((submission) => {
-        if (submission.author.participantType === "CONTESTANT" && !contestIds.has(submission.contestId) && submission.author.startTimeSeconds >= lowerTime && submission.author.startTimeSeconds <= upperTime) {
-            contestIds.set(submission.contestId, submission.author.startTimeSeconds);
+        if (submission.author.participantType === "CONTESTANT" && submission.author.startTimeSeconds >= lowerTime && submission.author.startTimeSeconds <= upperTime) {
+            if(!contestIds.has(submission.contestId))
+            contestIds.set(submission.contestId, 0);
+            if(submission.verdict === "OK")
+            {
+                let cnt = contestIds.get(submission.contestId);
+                cnt++;
+                contestIds.set(submission.contestId, cnt);
+            }
         }
     })
-
     ratingResult.forEach((contest) => {
         if (contestIds.has(contest.contestId)) {
-            general.addContest(contest.rank, contest.newRating - contest.oldRating, contest.contestId)
+            let cnt = contestIds.get(contest.contestId);
+            general.addContest(contest.rank, contest.newRating - contest.oldRating, contest.contestId, cnt);
         }
     })
 }
@@ -198,12 +211,12 @@ app.post("/", async (req, res) => {
     let submissionData = await getUser(url);
     let result = submissionData.data.result;
     timeAnalysis(result, startDate, endDate, problems);
-    console.log(problems);
+    // console.log(problems);
 
     let ratingData = await getUser(ratingUrl);
     ratingData = ratingData.data.result
     generalAnalysis(result, ratingData, startDate, endDate, general)
-    // console.log(general)
+    console.log(general)
 
     res.render('analysis', { handle, display: 1, problems, general })
 })
