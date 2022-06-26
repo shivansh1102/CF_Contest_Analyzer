@@ -216,34 +216,40 @@ async function getUser(url) {
         const response = await axios.get(url);
         return response
     } catch (error) {
-        console.error(error);
+        throw error
     }
 }
-
 
 app.post("/", async (req, res) => {
     resetArray();
     let { handle, startDate, endDate } = req.body;
-    startDate = parseInt((new Date(startDate).getTime() / 1000).toFixed(0));
-    endDate = parseInt((new Date(endDate).getTime() / 1000).toFixed(0));
-
-    const url = "https://codeforces.com/api/user.status?handle=" + handle;
-    const ratingUrl = "https://codeforces.com/api/user.rating?handle=" + handle;
-
-    let submissionData = await getUser(url);
-    let result = submissionData.data.result;
-    timeAnalysis(result, startDate, endDate, problems);
-    // console.log(problems);
-
-    let ratingData = await getUser(ratingUrl);
-    ratingData = ratingData.data.result
-    generalAnalysis(result, ratingData, startDate, endDate, general)
-    console.log(general)
-    problems.forEach((problem)=>{
-        problem.updateOtherThings(general.totalContests);
-    });
-    console.log(problems);
-    res.render('analysis', { handle, display: 1, problems, general })
+    try {
+        if(startDate>endDate){
+            let temp=startDate;
+            startDate=endDate;
+            endDate=temp;
+        }
+        startDate = parseInt((new Date(startDate).getTime() / 1000).toFixed(0));
+        endDate = parseInt((new Date(endDate).getTime() / 1000).toFixed(0));
+    
+        const url = "https://codeforces.com/api/user.status?handle=" + handle;
+        const ratingUrl = "https://codeforces.com/api/user.rating?handle=" + handle;
+    
+        let submissionData = await getUser(url);
+        let result = submissionData.data.result;
+        timeAnalysis(result, startDate, endDate, problems);
+        console.log(problems);
+    
+        let ratingData = await getUser(ratingUrl);
+        ratingData = ratingData.data.result
+        generalAnalysis(result, ratingData, startDate, endDate, general)
+        // console.log(general)
+    
+        res.render('analysis', { handle, display: 1, problems, general,alert:"" })
+    } catch (error) {
+        let e=error.response.data
+        res.render("analysis", { display: 0, alert:e.comment });
+    }
 })
 
 app.listen(3000, () => {
