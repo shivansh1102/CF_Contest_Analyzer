@@ -267,7 +267,7 @@ app.post("/", async (req, res) => {
         let ratingData = await getUser(ratingUrl);
         ratingData = ratingData.data.result
         generalAnalysis(result, ratingData, startDate, endDate, general)
-        console.log(general)
+        // console.log(general)
         problems.forEach((problem)=>{
             problem.updateOtherThings(general.totalContests);
         });
@@ -278,7 +278,6 @@ app.post("/", async (req, res) => {
             res.render("analysis", { display: 0, alert:"Internal Server error" });
             return;
         }
-        console.log(error)
         let e=error.response.data
         res.render("analysis", { display: 0, alert:e.comment });
     }
